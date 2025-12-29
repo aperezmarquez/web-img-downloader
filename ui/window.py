@@ -14,7 +14,7 @@ box(root, width=WIDTH, height=HEIGHT)
 
 # Images downloaded frame
 frame = tk.Frame(root)
+frame.pack(fill=tk.BOTH)
 list_box(frame, width=WIDTH, height=HEIGHT)
-frame.pack(padx=10, pady=10)
 
 root.mainloop()
