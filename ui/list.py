@@ -1,18 +1,22 @@
 import tkinter as tk
 
-def on_button_click(text):
-    # Code that updates de img being loaded
-    print("Click", text)
+def on_select(event):
+    widget = event.widget
+    selection = widget.curselection()
+    if selection:
+        value = widget.get(selection)
+        print(value)
 
-def add_button(root, text):
-    btn = tk.Button(
-            root,
-            text=text,
-            command=lambda: on_button_click(text)
-    )
-    btn.pack(padx=20, pady=5)
+    # Code that updates the img being loaded
+    
+
+def add_button(root, box, text):
+    box.insert(tk.END, text)
 
 def list_box(root, width, height):
+    box = tk.Listbox(root, width=width, height=height)
+    box.pack(padx=10, pady=10)
+
     # Code that detects when img is downloaded and calls add_button with the name of the file
-    add_button(root, "Button")
-    add_button(root, "Button2")
+    add_button(root, box, "Button")
+    add_button(root, box, "Button2")
