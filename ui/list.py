@@ -22,7 +22,7 @@ def add_scrollbar(root, box):
 
 def list_box(root, width, height):
     box_frame = tk.Frame(root)
-    box_frame.pack(side=tk.LEFT, padx=10, pady=10)
+    box_frame.pack(side=tk.LEFT, padx=80, pady=10)
 
     box = tk.Listbox(box_frame, width=50, height=50)
     box.pack(side=tk.LEFT)

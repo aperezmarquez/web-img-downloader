@@ -1,6 +1,7 @@
 import tkinter as tk
 from text_box import box
 from list import list_box
+from image import image_loader
 
 WIDTH=1400
 HEIGHT=900
@@ -16,5 +17,6 @@ box(root, width=WIDTH, height=HEIGHT)
 frame = tk.Frame(root)
 frame.pack(fill=tk.BOTH)
 list_box(frame, width=WIDTH, height=HEIGHT)
+image_loader(frame, width=WIDTH, height=HEIGHT)
 
 root.mainloop()
