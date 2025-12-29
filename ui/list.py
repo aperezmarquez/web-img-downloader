@@ -1,14 +1,17 @@
 import tkinter as tk
 
+img_sub = None
+
 def on_select(event):
+    global img_sub
     widget = event.widget
     selection = widget.curselection()
-    if selection:
-        value = widget.get(selection)
-        print(value)
 
-    # Code that updates the img being loaded
-    
+    value = widget.get(selection) if selection else None
+
+    if value and img_sub:
+        filename = ("assets/" + str(value) + ".png")
+        img_sub.change_img(filename)
 
 def add_button(root, box, text):
     box.insert(tk.END, text)
@@ -20,7 +23,10 @@ def add_scrollbar(root, box):
     box.config(yscrollcommand=scrollbar.set)
     scrollbar.config(command=box.yview)
 
-def list_box(root, width, height):
+def list_box(root, subject, width, height):
+    global img_sub
+    img_sub = subject
+
     box_frame = tk.Frame(root)
     box_frame.pack(side=tk.LEFT, padx=80, pady=10)
 
