@@ -16,10 +16,10 @@ async def download(session, url, filename):
         data = await response.read()
 
         if url.lower().endswith(".svg"):
-            cairosvg.svg2png(bytestring=data, write_to=f"../../assets/{filename}.png")
+            cairosvg.svg2png(bytestring=data, write_to=f"assets/{filename}.png")
             return
         
-        with open(f"../../assets/{filename}.png", "wb") as f:
+        with open(f"assets/{filename}.png", "wb") as f:
             f.write(data)
 
 async def download_images(image_urls, image_alts):

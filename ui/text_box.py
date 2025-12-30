@@ -12,3 +12,5 @@ def box(root, width, height):
 
 
     click = entry.bind('<Button-1>', placeholder)
+
+    return entry
