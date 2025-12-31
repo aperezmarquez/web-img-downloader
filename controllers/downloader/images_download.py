@@ -3,13 +3,20 @@ import aiohttp
 import asyncio
 import cairosvg
 from urllib.parse import urlparse
+from io import BytesIO
+from PIL import Image
 from controllers.downloader.get_web_images import get_web_images
 from controllers.observables.alts import AltsSubject
 from ui.list import update_subject
+from utils.image_memory import add_image
 
 alts_obs = AltsSubject()
 session = None
 pending_downloads = 0
+
+def get_images():
+    global memory_images
+    return memory_images
 
 async def ensure_session():
     global session
@@ -26,20 +33,16 @@ def filename_from_url(url):
     return os.path.basename(urlparse(url).path).split(".")[0] or "image"
 
 async def download(url, filename):
-    global session, alts_obs, pending_downloads
+    global session, alts_obs, pending_downloads, memory_images
 
     async with session.get(url) as response:
         if response.status != 200:
             return
-        
+    
         data = await response.read()
-
-        if url.lower().endswith(".svg"):
-            cairosvg.svg2png(bytestring=data, write_to=f"assets/{filename}.png")
-            return
-        
-        with open(f"assets/{filename}.png", "wb") as f:
-            f.write(data)
+        img_bytes = BytesIO(data)
+        img = Image.open(img_bytes)
+        add_image(filename, img)
 
         # When the img is downloaded, we update the list of alts
         alts_obs.add_alt(filename)

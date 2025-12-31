@@ -1,4 +1,5 @@
 import tkinter as tk
+from utils.image_memory import get_images
 
 box = None
 img_sub = None
@@ -14,8 +15,8 @@ def on_select(event):
     value = widget.get(selection) if selection else None
 
     if value and img_sub:
-        filename = ("assets/" + str(value) + ".png")
-        img_sub.change_img(filename)
+        img = get_images()[value]
+        img_sub.change_img(img)
 
 def add_button(text):
     global box

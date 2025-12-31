@@ -1,9 +1,10 @@
 from rx.subject import BehaviorSubject
+from PIL import Image
 
 class ImageSubject:
     def __init__(self, image):
-        self.image = image
-        self.subject = BehaviorSubject(image)
+        self.image = Image.open(image)
+        self.subject = BehaviorSubject(self.image)
         super().__init__()
 
     def subscribe(self, observer):
