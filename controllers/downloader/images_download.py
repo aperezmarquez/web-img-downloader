@@ -8,12 +8,25 @@ from controllers.observables.alts import AltsSubject
 from ui.list import update_subject
 
 alts_obs = AltsSubject()
+session = None
+pending_downloads = 0
+
+async def ensure_session():
+    global session
+    if session is None:
+        session = aiohttp.ClientSession()
+
+async def maybe_close_session():
+    global session
+    if pending_downloads == 0 and session:
+        await session.close()
+        session = None
 
 def filename_from_url(url):
     return os.path.basename(urlparse(url).path).split(".")[0] or "image"
 
-async def download(session, url, filename):
-    global alts_obs
+async def download(url, filename):
+    global session, alts_obs, pending_downloads
 
     async with session.get(url) as response:
         if response.status != 200:
@@ -31,21 +44,28 @@ async def download(session, url, filename):
         # When the img is downloaded, we update the list of alts
         alts_obs.add_alt(filename)
 
+    pending_downloads -= 1
+    await maybe_close_session()
+
 async def download_images(image_urls, image_alts):
-    # Before we start we update the observers subject so it receives the new alts
+    global pending_downloads
+
     update_subject(alts_obs)
+    
+    await ensure_session()
 
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for i, url in enumerate(image_urls):
-            if image_alts[i] is None or len(image_alts[i]) == 0 or len(image_alts[i]) > 10:
-                image_alts[i] = filename_from_url(url)
+    for i, url in enumerate(image_urls):
+        if not url:
+            continue
 
-            image_alts[i] = image_alts[i].replace(" ", "-")
+        alt = image_alts[i]
+        if not alt or len(alt) > 10:
+            alt = filename_from_url(url)
 
-            tasks.append(asyncio.create_task(download(session, url, image_alts[i])))
+        alt = alt.replace(" ", "-")
+        image_alts[i] = alt
 
-        await asyncio.gather(*tasks)
+        asyncio.create_task(download(url, alt))
 
     return image_alts
 

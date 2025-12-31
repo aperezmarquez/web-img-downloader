@@ -4,6 +4,9 @@ from PIL import Image, ImageTk
 def update_image(image_canvas, img):
     print(img)
     new_image = Image.open(img)
+    
+    new_image.thumbnail((image_canvas.winfo_width(), image_canvas.winfo_height()))
+
     new_photo = ImageTk.PhotoImage(new_image)
 
     image_canvas.create_image(0, 0, anchor=tk.NW, image=new_photo)

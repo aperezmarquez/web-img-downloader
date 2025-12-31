@@ -6,8 +6,8 @@ from ui.image import image_loader
 from controllers.observables.image_selection import ImageSubject
 from controllers.downloader.images_download import download_url
 
-async def send_url(url):
-    alts_obs = await download_url(url)
+async def send_url(url, loop):
+    loop.create_task(download_url(url))
 
 def window():
     WIDTH=1400
@@ -15,12 +15,23 @@ def window():
     img_sub = ImageSubject("assets/placeholder.png")
 
     root = tk.Tk()
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    def poll_asyncio():
+        loop.stop()
+        loop.run_forever()
+        root.after(10, poll_asyncio)
+
+    poll_asyncio()
+
     root.geometry(f"{WIDTH}x{HEIGHT}")
     root.title("Descargador de imagenes por URL")
 
     # Text box to insert the url
     text_box = box(root, width=WIDTH, height=HEIGHT)
-    btn = tk.Button(root, text="Descargar imgs", command=lambda: asyncio.run(send_url(text_box.get())))
+    btn = tk.Button(root, text="Descargar imgs", command=lambda: asyncio.run(send_url(text_box.get(), loop)))
     btn.pack(pady=10)
 
     # Images downloaded frame
