@@ -7,7 +7,7 @@ from controllers.observables.image_selection import ImageSubject
 from controllers.downloader.images_download import download_url
 
 async def send_url(url):
-    alts = await download_url(url)
+    alts_obs = await download_url(url)
 
 def window():
     WIDTH=1400

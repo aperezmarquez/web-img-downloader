@@ -1,6 +1,10 @@
 import tkinter as tk
 
+box = None
 img_sub = None
+
+def update_subject(new_sub):
+    new_sub.subscribe(lambda x: add_button(x))
 
 def on_select(event):
     global img_sub
@@ -13,10 +17,12 @@ def on_select(event):
         filename = ("assets/" + str(value) + ".png")
         img_sub.change_img(filename)
 
-def add_button(root, box, text):
+def add_button(text):
+    global box
     box.insert(tk.END, text)
 
-def add_scrollbar(root, box):
+def add_scrollbar(root):
+    global box
     scrollbar = tk.Scrollbar(root, orient=tk.VERTICAL)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
@@ -24,7 +30,7 @@ def add_scrollbar(root, box):
     scrollbar.config(command=box.yview)
 
 def list_box(root, subject, width, height):
-    global img_sub
+    global img_sub, box
     img_sub = subject
 
     box_frame = tk.Frame(root)
@@ -34,11 +40,6 @@ def list_box(root, subject, width, height):
     box.pack(side=tk.LEFT)
 
     # Scrollbar for the list, in case there are too many imgs
-    add_scrollbar(box_frame, box)
-
-    # Code that detects when img is downloaded and calls add_button with the name of the file
-    add_button(root, box, "Button")
-    add_button(root, box, "Button2")
-    add_button(root, box, "Button3")
+    add_scrollbar(box_frame)
 
     box.bind("<<ListboxSelect>>", on_select)

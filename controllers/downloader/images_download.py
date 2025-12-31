@@ -4,11 +4,17 @@ import asyncio
 import cairosvg
 from urllib.parse import urlparse
 from controllers.downloader.get_web_images import get_web_images
+from controllers.observables.alts import AltsSubject
+from ui.list import update_subject
+
+alts_obs = AltsSubject()
 
 def filename_from_url(url):
     return os.path.basename(urlparse(url).path).split(".")[0] or "image"
 
 async def download(session, url, filename):
+    global alts_obs
+
     async with session.get(url) as response:
         if response.status != 200:
             return
@@ -22,9 +28,12 @@ async def download(session, url, filename):
         with open(f"assets/{filename}.png", "wb") as f:
             f.write(data)
 
+        # When the img is downloaded, we update the list of alts
+        alts_obs.add_alt(filename)
+
 async def download_images(image_urls, image_alts):
-    print("URLs", image_urls)
-    print("Alts", image_alts)
+    # Before we start we update the observers subject so it receives the new alts
+    update_subject(alts_obs)
 
     async with aiohttp.ClientSession() as session:
         tasks = []
@@ -33,6 +42,7 @@ async def download_images(image_urls, image_alts):
                 image_alts[i] = filename_from_url(url)
 
             image_alts[i] = image_alts[i].replace(" ", "-")
+
             tasks.append(asyncio.create_task(download(session, url, image_alts[i])))
 
         await asyncio.gather(*tasks)
