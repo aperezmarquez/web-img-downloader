@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 # - Return: 
 #   - image_urls: Array with the image urls
 #   - image_alts: Array with the image alts
-# - Description: Using aiohttp and bs4 we get the html from the website and extract all the images urls and alts.
+# - Description: Extracts the images html from the url.
 async def get_web_images(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -17,6 +17,7 @@ async def get_web_images(url):
 
             html = await response.text()
             
+            # This library lets you convert the html text to a soup object so we can use functions as find_all or get
             soup = BeautifulSoup(html, "html.parser")
             images = soup.find_all('img')
             image_urls = [img.get('src') for img in images]

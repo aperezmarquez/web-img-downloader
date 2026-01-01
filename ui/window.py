@@ -29,12 +29,12 @@ def window(root, width, height, loop):
     root.geometry(f"{width}x{height}")
     root.title("Descargador de imagenes por URL")
 
-    # Text box to insert the url
+    # App text box element for the user to insert the url
     text_box = box(root, width=width, height=height)
     btn = tk.Button(root, text="Descargar imgs", command=lambda: asyncio.run(send_url(text_box.get(), loop)))
     btn.pack(pady=10)
 
-    # Images downloaded frame
+    # Frame to select each downloaded img and show them
     frame = tk.Frame(root)
     frame.pack(fill=tk.BOTH)
     list_box(frame, img_sub, width=width, height=height)

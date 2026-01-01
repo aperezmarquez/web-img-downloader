@@ -36,5 +36,5 @@ def image_loader(root, subject, width, height):
     image_canvas.create_image(width/2, height/2, anchor=tk.SE, image=photo)
     image_canvas.image = photo
 
-    # We subscribe to the subject, here every time we select another img it updates
+    # Every time a new image is selected in the list it updates the canvas img
     subject.subscribe(lambda img: update_image(image_canvas, img))

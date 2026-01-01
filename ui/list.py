@@ -71,5 +71,5 @@ def list_box(root, subject, width, height):
     # Scrollbar for the list, in case there are too many imgs
     add_scrollbar(box_frame)
     
-    # Calls on_select when any item from the listbox is selected
+    # Every time a new list item is selected it updates the img subject to show it in the canvas
     box.bind("<<ListboxSelect>>", on_select)

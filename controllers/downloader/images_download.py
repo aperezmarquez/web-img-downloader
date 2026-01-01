@@ -17,7 +17,7 @@ pending_downloads = 0
 # CREATES A SESSION IF THERE IS NONE
 # - Params: None
 # - Return: None
-# - Description: Ensures that there is a session, if there is none it creates one and saves it in a global variable
+# - Description: Ensures there is a session so the code can proceed correctly
 async def ensure_session():
     global session
     if session is None:
@@ -26,7 +26,7 @@ async def ensure_session():
 # SESSION CLOSING
 # - Params: None
 # - Return: None
-# - Description: Checks if there is no pending downloads, if all the url images are downloaded, it closes the session
+# - Description: Close the aiohttp sessio if there are no pending downloads
 async def maybe_close_session():
     global session
     if pending_downloads == 0 and session:
@@ -38,6 +38,7 @@ async def maybe_close_session():
 #   - url: the given url
 # - Return:
 #   - filename: using the url gets the filename at the end of the path and splits it to get rid of the extension
+# - Description: In case there is no alt given, gets the img name from the url
 def filename_from_url(url):
     return os.path.basename(urlparse(url).path).split(".")[0] or "image"
 
@@ -46,7 +47,7 @@ def filename_from_url(url):
 #   - url: the url of the image
 #   - filename: the name of the image
 # - Return: None
-# - Description: Using an aiohttp session downloads the image and saves it in memory using BytesIO
+# - Description: Using an aiohttp session downloads the image and saves it in memory using BytesIO to show them in the TkInter app
 async def download(url, filename):
     global session, alts_obs, pending_downloads, memory_images
 
@@ -73,26 +74,26 @@ async def download(url, filename):
 #   - image_alts: the list with the names of the images
 # - Return:
 #   - image_alts: the list with the names of the images
-# - Description: Gets the images names from the alt or the url and calls the download function for each image
+# - Description: Using the image names, downloads and saves each img in memory calling download()
 async def download_images(image_urls, image_alts):
     global pending_downloads
     
-    # Updates the observable object being used by the list in TkInter app
+    # Updates the observable object being used by the list to show the names of each image
     update_subject(alts_obs)
-    # CHecks for the session and creates it if needed
+    # Creates a session to execute all the downloads
     await ensure_session()
 
     for i, url in enumerate(image_urls):
         if not url:
             continue
         
-        # Gets the filename from the alt if it exists, if not it gets the name from the url
+        # Gets a name for the image to save it in memory
         if not image_alts[i]:
             image_alts[i] = filename_from_url(url)
 
-        image_alts[i] = image_alts[i].replace(" ", "-") # Changes the spaces in the filename to -
+        image_alts[i] = image_alts[i].replace(" ", "-") # Prepares the name to download it locally with no problems
         
-        # Creates a task in asyncio to download each image
+        # Creates an asyncio task to download the images inside of the loop created in the main file
         asyncio.create_task(download(url, image_alts[i]))
 
     return image_alts
