@@ -1,5 +1,12 @@
 from rx.subject import Subject
 
+# SUBJECT FOR IMAGE NAMES/ALTS
+# - Params: None
+# - Functions:
+#   - subscribe: returns the subject subscription
+#   - add_alt: adds a new alt to the subject and notifies the observers of the new added name
+#   - get_alts: returns the list of alts/names
+# - Description: Subject for the image names/alts
 class AltsSubject:
     def __init__(self):
         self.alts = []

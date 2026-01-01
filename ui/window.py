@@ -6,38 +6,36 @@ from ui.image import image_loader
 from controllers.observables.image_selection import ImageSubject
 from controllers.downloader.images_download import download_url
 
+# DOWNLOADS THE IMAGES FROM THE URL
+# - Params:
+#   - url: the url given by the user
+#   - loop: the asyncio event loop
+# - Return: None
+# - Description: Creates a task in asyncio to download the images using the loop created in main.py
 async def send_url(url, loop):
     loop.create_task(download_url(url))
 
-def window():
-    WIDTH=1400
-    HEIGHT=900
-    img_sub = ImageSubject("assets/placeholder.png")
+# APP MAIN WINDOW
+# - Params:
+#   - root: the main root
+#   - width: the width of the window
+#   - height: the height of the window
+#   - loop: the asyncio event loop
+# - Return: None
+# - Description: Creates the app window with all the elements
+def window(root, width, height, loop):
+    img_sub = ImageSubject("assets/placeholder.png") 
 
-    root = tk.Tk()
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    def poll_asyncio():
-        loop.stop()
-        loop.run_forever()
-        root.after(10, poll_asyncio)
-
-    poll_asyncio()
-
-    root.geometry(f"{WIDTH}x{HEIGHT}")
+    root.geometry(f"{width}x{height}")
     root.title("Descargador de imagenes por URL")
 
     # Text box to insert the url
-    text_box = box(root, width=WIDTH, height=HEIGHT)
+    text_box = box(root, width=width, height=height)
     btn = tk.Button(root, text="Descargar imgs", command=lambda: asyncio.run(send_url(text_box.get(), loop)))
     btn.pack(pady=10)
 
     # Images downloaded frame
     frame = tk.Frame(root)
     frame.pack(fill=tk.BOTH)
-    list_box(frame, img_sub, width=WIDTH, height=HEIGHT)
-    image_loader(frame, img_sub, width=WIDTH, height=HEIGHT)
-
-    root.mainloop()
+    list_box(frame, img_sub, width=width, height=height)
+    image_loader(frame, img_sub, width=width, height=height)
