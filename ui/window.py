@@ -36,7 +36,7 @@ def window(root, width, height, loop):
     btn.pack(pady=10)
 
     # Progress bar to show the download progress
-    progress_bar(root)
+    progress_bar(root, btn)
 
     # Frame to select each downloaded img and show them
     frame = tk.Frame(root)
