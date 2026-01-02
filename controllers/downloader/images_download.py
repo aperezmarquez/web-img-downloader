@@ -7,12 +7,15 @@ from io import BytesIO
 from PIL import Image
 from controllers.downloader.get_web_images import get_web_images
 from controllers.observables.alts import AltsSubject
+from controllers.observables.progress_download import ProgressSubject
 from ui.list import update_subject
+from ui.progress_bar import update_progress_sub
 from utils.image_memory import add_image
 
 alts_obs = AltsSubject()
 session = None
 pending_downloads = 0
+progress_sub = None
 
 # CREATES A SESSION IF THERE IS NONE
 # - Params: None
@@ -49,7 +52,7 @@ def filename_from_url(url):
 # - Return: None
 # - Description: Using an aiohttp session downloads the image and saves it in memory using BytesIO to show them in the TkInter app
 async def download(url, filename):
-    global session, alts_obs, pending_downloads, memory_images
+    global session, alts_obs, pending_downloads, memory_images, progress_sub
 
     async with session.get(url) as response:
         if response.status != 200:
@@ -66,6 +69,8 @@ async def download(url, filename):
         alts_obs.add_alt(filename)
 
     pending_downloads -= 1
+    progress_sub.update_progress(pending_downloads)
+    
     await maybe_close_session()
 
 # CALLS TO DOWNLOAD EACH IMAGE
@@ -95,6 +100,7 @@ async def download_images(image_urls, image_alts):
         
         # Creates an asyncio task to download the images inside of the loop created in the main file
         asyncio.create_task(download(url, image_alts[i]))
+        pending_downloads += 1
 
     return image_alts
 
@@ -105,7 +111,11 @@ async def download_images(image_urls, image_alts):
 #   - alts: the list with the names of the images in memory
 # - Description: Gets the images from the url and calls a function to download them and get their names (alts)
 async def download_url(url):
+    global progress_sub
     urls, alts = await get_web_images(url)
+    progress_sub = ProgressSubject(len(urls))
+    update_progress_sub(progress_sub)
+
     alts = await download_images(urls, alts)
 
     return alts

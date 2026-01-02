@@ -3,6 +3,7 @@ import tkinter as tk
 from ui.text_box import box
 from ui.list import list_box
 from ui.image import image_loader
+from ui.progress_bar import progress_bar
 from controllers.observables.image_selection import ImageSubject
 from controllers.downloader.images_download import download_url
 
@@ -33,6 +34,9 @@ def window(root, width, height, loop):
     text_box = box(root, width=width, height=height)
     btn = tk.Button(root, text="Descargar imgs", command=lambda: asyncio.run(send_url(text_box.get(), loop)))
     btn.pack(pady=10)
+
+    # Progress bar to show the download progress
+    progress_bar(root)
 
     # Frame to select each downloaded img and show them
     frame = tk.Frame(root)
