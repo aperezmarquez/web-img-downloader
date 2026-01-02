@@ -6,7 +6,11 @@ All you need to run this app is python 3.8 or higher, and install all the depend
 
 # Installation
 
-Download all the dependencies.
+First, clone this repository inside a folder in your computer
+```
+git clone https://github.com/aperezmarquez/web-img-downloader
+```
+DOnce you clone the repo, download all the dependencies from the root folder with:
 ```
 pip install -r requirements.txt
 ```
